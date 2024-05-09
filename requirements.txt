@@ -1,0 +1,6 @@
+python-dotenv
+openai
+spotipy
+ipywidgets
+flask
+Flask-Session

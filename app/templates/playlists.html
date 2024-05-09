@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block main %}
+<div class="ui main container">
+    <h1 class="ui header">Select a playlist to continue</h1>
+    <div class="ui cards">
+        {% for playlist in g.playlists %}
+        <div class="ui card">
+            <div class="image">
+                <img src="{{ playlist.image }}">
+            </div>
+            <div class="content">
+                <div class="header">
+                    {{ playlist.name | e }}
+                </div>
+                <div class="description">
+                    {{ playlist.description | e }}
+                </div>
+            </div>
+            <div class="ui button" onclick="select_playlist('{{ playlist.id }}');">
+                Select
+                <i class="chevron circle right icon"></i>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <form action="{{ g.playlist_action }}" method="post">
+        <input type="hidden" id="playlist_id" name="playlist" value="">
+    </form>
+    <script>
+        function select_playlist(id) {
+            $("#playlist_id").val(id).parent().submit();
+        }
+    </script>
+</div>
+{% endblock main %}

@@ -1,0 +1,47 @@
+<!doctype html>
+    <head>
+        {% block head %}
+            <title>{% block title %}Quizzer{% endblock %}</title>
+            <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+            <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+            <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
+        {% endblock %}
+    </head>
+    <body>
+        {% block top %}
+        <div class="ui inverted menu">
+            <div class="header item">
+                <a href="/">Quizzer</a>
+            </div>
+            <div class="right menu">
+                <div class="item" id="top_status"></div>
+            </div>
+        </div>
+        {% endblock %}
+        
+        {% block messages %}
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="ui negative message">
+                    <i class="close icon"></i>
+                    <ul class=list>
+                        {% for message in messages %}
+                            <li>{{ message |e }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <script>
+                    $('.message .close')
+                        .on('click', function() {
+                            $(this).closest('.message').transition('fade');
+                        });
+                </script>    
+                {% endif %}
+            {% endwith %}
+        {% endblock %}
+
+        {% block main %}
+        {% endblock %}
+    </body>
+</html>

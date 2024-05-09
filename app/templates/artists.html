@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block main %}
+<div class="ui main container">
+    <h1 class="ui header">Select an artist to continue</h1>
+    <div class="ui cards">
+        {% for artist in g.artists %}
+        <div class="ui card">
+            <div class="image">
+                <img src="{{ artist.image }}">
+            </div>
+            <div class="content">
+                <div class="header">
+                    {{ artist.name | e }}
+                </div>
+            </div>
+            <div class="ui button" onclick="select_artist('{{ artist.id }}');">
+                Select
+                <i class="chevron circle right icon"></i>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="card">
+            <div class="content">
+                <div class="header">Choose your own</div>
+                <div class="description">
+                    Enter an artist name here
+                    <div class="ui input">
+                        <form action="{{ g.artist_action }}" method="post" id="form_by_name">
+                            <input type="text" name="artist_name" placeholder="Enter an artist name...">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="ui button" onclick="$('#form_by_name').submit();">
+                Play
+                <i class="chevron circle right icon"></i>
+            </div>
+        </div>
+    </div>
+    <form action="{{ g.artist_action }}" method="post">
+        <input type="hidden" id="artist_id" name="artist_id" value="">
+    </form>
+    <script>
+        function select_artist(id) {
+            $("#artist_id").val(id).parent().submit();
+        }
+    </script>
+</div>
+{% endblock main %}

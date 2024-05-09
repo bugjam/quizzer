@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block top %} {# Empty #} {% endblock top %}
+{% block main %}
+<div class="ui main container">
+    <div class="ui container">
+        <div class="ui grid">
+            <div class="twelve wide column">
+                <img class="ui" src="{{ url_for('static', filename='quizzer.webp') }}">
+            </div>
+            <div class="four wide column teal" id="welcome_message">
+                <h1 class="ui">Welcome</h1>
+                    <span class="ui large white text">
+                        {{ g.welcome_message | e }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui cards">
+        <div class="card">
+            <div class="content">
+                <div class="header">Spotify</div>
+                {% if session.user %}
+                <div class="description">
+                    You are logged in with Spotify as <b>{{session.user}}</b>
+                </div>
+                {% else %}
+                <div class="description">
+                    Log in with Spotify to continue.
+                </div>
+                <div class="ui button" onclick="location.href='{{url_for('spotify_authenticate')}}';">
+                    Log in
+                    <i class="chevron circle right icon"></i>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="content">
+                <div class="header">Playlist Quiz</div>
+                <div class="description">
+                    A quiz with questions about the artists of a playlist
+                </div>
+            </div>
+            <div class="ui button" onclick="location.href='{{ url_for('quiz_new_select_playlist')}}';">
+                Play
+                <i class="chevron circle right icon"></i>
+            </div>
+        </div>
+        <div class="card">
+            <div class="content">
+                <div class="header">Artist Quiz</div>
+                <div class="description">
+                    A quiz with questions about an artist of your choice                    
+                </div>
+            </div>
+            <div class="ui button" onclick="location.href='{{ url_for('quiz_new_select_artist')}}';">
+                Play
+                <i class="chevron circle right icon"></i>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}

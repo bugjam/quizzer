@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block head %}
+    {{ super() }}
+    <script>
+        var question_number = 0;
+        var correct_answers = 0;
+        function reset() {
+            $("#question").text("");
+            $("#answers input:radio").each(function() {
+                this.disabled = false;
+                this.checked = false;
+            });
+            $("#answers label").addClass("purple").removeClass(["red","green"]);
+            $("#feedback").hide();
+            $("#submit_button").show();
+            $("#next_question").hide();
+        }
+        function show_status() {
+            $("#top_status").html(
+                '<i class="question circle outline icon"></i>'+
+                ' Question '+question_number+
+                '  &nbsp;&nbsp;<i class="check circle outline icon"></i>'+
+                ' Correct answers: '+correct_answers);
+        }
+        function get_question() {
+            reset();
+            $("#loading_indicator").show();
+            $.getJSON({
+                url: "{{ url_for('quiz_question') }}", 
+                success: function(r){
+                    $("#question").text(r.question);
+                    $("#answers label span").each(function(i) {
+                        $(this).text(r.answers[i]);
+                    });
+                    question_number = r.question_number;
+                    show_status();
+                    $("#loading_indicator").hide();
+                }
+              });
+        }
+        function submit_answer() {
+            a = $("input[name='answer']:checked").val();
+            $("#answers input").each(function() {
+                $(this).disabled = true;
+            });
+            $("#submit_button").hide();
+            $.post({
+                url: "{{ url_for('quiz_answer') }}",
+                dataType: "json",
+                data: { "answer": a },
+                success: function(r) {
+                    $("#feedback_message").text(r.message);
+                    $("#feedback_trivia").text(r.trivia);
+                    $("#feedback").show();
+                    if(r.correct) {
+                        $("#answers label").addClass("green").removeClass("purple");
+                    } else {
+                        $("#answers label").addClass("red").removeClass("purple");
+                    }
+                    correct_answers = r.correct_answers;
+                    show_status();
+                }
+            });
+            $("#next_question").show();
+        }
+        $(document).ready(get_question);
+    </script>
+{% endblock head %}
+
+{% block main %}
+<div class="ui main container">
+    <div class="ui large message">
+        <span id="question"></span>
+        <div class="ui placeholder" id="loading_indicator">
+            <div class="paragraph">
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ui form">
+        <div class="grouped fields" id="answers">
+            <div class="ui invisible checkbox">
+                <input type="radio" id="answer1" name="answer" value="0">
+                <label for="answer1" class="ui purple button "><b>A: </b><span></span></label>
+            </div>
+            <div class="ui invisible checkbox">
+                <input type="radio" id="answer2" name="answer" value="1">
+                <label for="answer2" class="ui purple button "><b>B: </b><span></span></label>
+            </div>
+            <div class="ui invisible checkbox">
+                <input type="radio" id="answer3" name="answer" value="2">
+                <label for="answer3" class="ui purple button "><b>C: </b><span></span></label>
+            </div>
+            <div class="ui invisible checkbox">
+                <input type="radio" id="answer4" name="answer" value="3">
+                <label for="answer4" class="ui purple button "><b>D: </b><span></span></label>
+            </div>
+        </div>
+        <button class="ui primary button" id="submit_button" onclick="submit_answer();">Submit answer</button>
+        <button class="ui primary button" style="display: none;" id="next_question" onclick="get_question();">Next question</button>
+        <button class="ui right button" onclick="location.href='/'">New Quiz</button>
+    </div>
+    <div class="ui large message" id="feedback">
+        <div class="header" id="feedback_message"></div>
+        <div id="feedback_trivia"></div>
+    </div>
+</div>
+{% endblock main %}
