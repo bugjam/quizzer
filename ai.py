@@ -7,8 +7,9 @@ api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise RuntimeError("API key missing")
 
-model = "gpt-3.5-turbo"
+#model = "gpt-3.5-turbo"
 #model = 'gpt-4-turbo-preview'
+model = "gpt-4o"
 
 client = OpenAI(api_key=api_key)
 
