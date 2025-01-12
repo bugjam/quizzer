@@ -8,7 +8,7 @@ load_dotenv()  # This loads the environment variables from .env
 
 #model = "gpt-3.5-turbo"
 #model = 'gpt-4-turbo-preview'
-model = "gpt-4o"
+model = "gpt-4o-mini"
 
 llm = ChatOpenAI(model=model)
 structured_llms = dict()
