@@ -3,3 +3,4 @@ flask_session/
 .cache
 .env
 .DS_Store
+.vscode/
