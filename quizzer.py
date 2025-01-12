@@ -1,11 +1,12 @@
 import json
 import random
+import model
 import ai
 
 use_ai = True
 
 def new_conversation(instructions=''):
-    conversation = [ { "role": "system", "content": f"You are a Walensio, the quizzmaster in a music quiz show. {instructions}"}]
+    conversation = [ ("system", f"You are a Walensio, the quizzmaster in a music quiz show. {instructions}") ]
     return conversation
 
 def welcome_message():
@@ -25,28 +26,15 @@ class ArtistsQuiz:
     def ask_question(self):
         #self.conversation = new_conversation()
         artist = random.choice(self.artists)
-        prompt = (f"Create a question about {artist} and provide 4 possible answers."
-                  "Format your reponse as JSON like this:"
-                  "{\"question\": \"Who are the members of bla bla?\", "
-                  " \"answers\": [\"First option\", \"Second option\", \"Third option\", \"Fourth option\"]}")
-        jquestion = ai.ask(prompt, self.conversation, expect_json=True)
-        question = json.loads(jquestion)
-        random.shuffle(question["answers"])
-        self.answers = question["answers"]
+        prompt = f"Create a question about {artist} and provide 4 possible answers."
+        question = ai.ask(prompt, self.conversation, output_type=model.QuizQuestion)
+        random.shuffle(question.answers)
+        self.question = question
         self.question_number += 1
         return question
 
     def check_answer(self, answer):
-        prompt = (f"Given the answer {answer}, "
-                            "determine if the answer is correct. "
-                            "Format your reponse as JSON like this:"
-                            "{\"correct\": true, \"message\": \"The answer is correct\" "
-                            " \"trivia\": \"Album 1 was the first album to reach a top 10 position\" }")
-        
-        jfeedback = ai.ask(prompt, self.conversation, expect_json=True)
-        feedback = json.loads(jfeedback)
-
-        if feedback["correct"]:
+        c = self.question.answers[answer].is_correct
+        if c:
             self.correct_answers += 1
-        
-        return feedback
+        return c

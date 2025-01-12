@@ -54,17 +54,25 @@ def quiz_play():
 
 @app.route("/quiz/question")
 def quiz_question():
-    question = session['quiz'].ask_question()
-    question.update({"question_number": session['quiz'].question_number})
+    q = session['quiz'].ask_question()
+    view_model = { 
+        "question": q.question, 
+        "answers": [a.answer for a in q.answers],
+        "question_number": session['quiz'].question_number
+    }
     session.modified = True
-    return jsonify(question)
+    return jsonify(view_model)
 
 @app.route("/quiz/question", methods=['POST'])
 def quiz_answer():
     n = request.form.get('answer')
-    answer = session['quiz'].answers[int(n)]
-    feedback = session['quiz'].check_answer(answer)
-    feedback.update({"correct_answers": session['quiz'].correct_answers})
+    correct = session['quiz'].check_answer(int(n))
+    feedback = {
+        "correct": correct,
+        "message": f"The answer is {'correct' if correct else 'incorrect'}",
+        "trivia": session['quiz'].question.trivia,
+        "correct_answers": session['quiz'].correct_answers
+    }
     session.modified = True
     return jsonify(feedback)
 

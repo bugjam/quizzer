@@ -1,43 +1,38 @@
 import os
 from dotenv import load_dotenv
-from openai import OpenAI
+from langchain_openai import ChatOpenAI
+
+import model
 
 load_dotenv()  # This loads the environment variables from .env
-api_key = os.getenv("OPENAI_API_KEY")
-if not api_key:
-    raise RuntimeError("API key missing")
 
 #model = "gpt-3.5-turbo"
 #model = 'gpt-4-turbo-preview'
 model = "gpt-4o"
 
-client = OpenAI(api_key=api_key)
+llm = ChatOpenAI(model=model)
+structured_llms = dict()
 
+def model_for(output_type: type):
+    return structured_llms.setdefault(output_type.__name__, llm.with_structured_output(output_type))
 
-def ask(prompt, conversation=None, expect_json=False):
-    m = {"role": "user", "content": prompt}
+def ask(prompt, conversation=None, output_type=None):
+    m = ("human", prompt)
     if conversation is None:
         messages = [m]
     else:
         conversation.append(m)
         messages = conversation
-    rf = {"type": "json_object"} if expect_json else None
-    chat_completion = client.chat.completions.create(
-        messages=messages,
-        model=model,
-        response_format=rf,
-        temperature=1.0
-    )
-    response = chat_completion.choices[0].message
-    if conversation != None:
-        conversation.append(response)
-    return response.content
+    
+    if output_type is not None:
+        m = model_for(output_type) 
+        response = m.invoke(messages)
 
-
-""" conversation = []
-p = input("What's your prompt? ")
-while p != "stop":
-    response = ask(p, conversation)
-    print(response)
-    p = input()
- """
+        if conversation != None:
+            conversation.append(str(response))
+        return response
+    else:
+        response = llm.invoke(messages)
+        if conversation != None:
+            conversation.append(response)
+        return response.content
