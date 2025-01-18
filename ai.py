@@ -14,7 +14,7 @@ llm = ChatOpenAI(model=model)
 structured_llms = dict()
 
 def model_for(output_type: type):
-    return structured_llms.setdefault(output_type.__name__, llm.with_structured_output(output_type))
+    return structured_llms.setdefault(output_type.__name__, llm.with_structured_output(output_type, method="json_schema"))
 
 def ask(prompt, conversation=None, output_type=None):
     m = ("human", prompt)
