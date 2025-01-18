@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block head %}
     {{ super() }}
+    <script src="{{ url_for('static', filename='audio.js') }}"></script>
     <script>
         var question_number = 0;
         var correct_answers = 0;
+        var play_audio = false;
         function reset() {
             $("#question").text("");
             $("#answers input:radio").each(function() {
@@ -16,7 +18,9 @@
             $("#next_question").hide();
         }
         function show_status() {
+            var sound_icon = play_audio ? "volume up icon" : "volume mute icon";
             $("#top_status").html(
+                '<i class="'+sound_icon+'" id="mute_button" onclick="toggle_audio();"></i>'+
                 '<i class="question circle outline icon"></i>'+
                 ' Question '+question_number+
                 '  &nbsp;&nbsp;<i class="check circle outline icon"></i>'+
@@ -35,6 +39,9 @@
                     question_number = r.question_number;
                     show_status();
                     $("#loading_indicator").hide();
+                    if(play_audio) {
+                        playAudio("{{ url_for('quiz_question_audio') }}");
+                    }
                 }
               });
         }
@@ -63,7 +70,13 @@
             });
             $("#next_question").show();
         }
-        $(document).ready(get_question);
+        function toggle_audio() {
+            play_audio = !play_audio;
+            show_status();
+        }
+        $(document).ready(function() {
+            get_question();
+        });
     </script>
 {% endblock head %}
 

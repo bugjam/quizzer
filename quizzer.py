@@ -26,7 +26,7 @@ class ArtistsQuiz:
     def ask_question(self):
         #self.conversation = new_conversation()
         artist = random.choice(self.artists)
-        prompt = f"Create a question about {artist} and provide 4 possible answers."
+        prompt = f"Ask a new question about {artist} and provide 4 possible answers."
         question = ai.ask(prompt, self.conversation, output_type=model.QuizQuestion)
         random.shuffle(question.answers)
         self.question = question
@@ -38,3 +38,6 @@ class ArtistsQuiz:
         if c:
             self.correct_answers += 1
         return c
+    
+    def correct_answer(self):
+        return [a.is_correct for a in self.question.answers].index(True)

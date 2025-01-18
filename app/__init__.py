@@ -2,6 +2,7 @@ from flask import *
 from flask_session import Session
 from spotify import SpotifyClient
 import quizzer
+import speech
 
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -69,12 +70,21 @@ def quiz_answer():
     correct = session['quiz'].check_answer(int(n))
     feedback = {
         "correct": correct,
-        "message": f"The answer is {'correct' if correct else 'incorrect'}",
+        "message": "The answer is correct" if correct 
+            else "The answer is incorrect. The correct answer is " + 
+                    "ABCD"[session['quiz'].correct_answer()] + ".",
         "trivia": session['quiz'].question.trivia,
         "correct_answers": session['quiz'].correct_answers
     }
     session.modified = True
     return jsonify(feedback)
+
+@app.route("/quiz/question/audio")
+def quiz_question_audio():
+    q = session['quiz'].question
+    if q is None:
+        return Response(status=404)
+    return Response(speech.say(q.question), content_type='audio/aac')
 
 @app.route("/spotify/authenticate")
 def spotify_authenticate():

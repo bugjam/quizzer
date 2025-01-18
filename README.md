@@ -19,9 +19,9 @@ LANGCHAIN_PROJECT="quizzer"
 
 * v1.0 - First playable version with integration to Spotify and OpenAI
 * v1.1 - Introduced LangChain to prepare for more "agentic" flows
+* v1.2 - Speech output
 
 ## Ideas for the future
-* Speech output
 * Provide artist biography and discography as context instead of relying on the model's training knowledge
 * Trigger Spotify playback of relevant music
 * Use few-shot learning to create more variation in the questions
