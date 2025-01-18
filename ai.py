@@ -1,8 +1,12 @@
 import os
+import warnings
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 
 import model
+
+# Suppress specific warning
+warnings.filterwarnings("ignore", message="Streaming with Pydantic response_format not yet supported.")
 
 load_dotenv()  # This loads the environment variables from .env
 
